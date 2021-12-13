@@ -18,7 +18,7 @@ print(mean({1,2,4})
 
 ```
 
-Moonscript:
+MoonScript:
 
 ```
 
@@ -53,7 +53,7 @@ range(arr) -- Calculates range of arr.
 
 **Linear Regression:**
 
-Moonscript:
+MoonScript:
 
 ```
 model = LinearRegression(X, Y)
