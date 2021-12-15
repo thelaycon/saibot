@@ -1,5 +1,7 @@
 Noob Saibot always felt like a cheatcode, I needed a similar solution to simple or perhaps complex statistics problems on Lua. 
 
+![Noob Saibot](https://c.tenor.com/ckUZEMepZw4AAAAC/mortal-kombat-noob-saibot.gif)
+
 Saibot is a statistics library for Lua and currently supports a few descriptive and inferential statistics techniques.
 
 
