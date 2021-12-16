@@ -22,7 +22,7 @@ export var = (arr) ->
   for i in *arr
     xs = math.pow i - mean_, 2
     xsquared += xs
-  return xsquared / #arr
+  return xsquared / (#arr-1)
   
 -- Calculates the Standard Deviation  
 export std = (arr) ->
@@ -110,3 +110,127 @@ export class LinearRegression
     else
       return @find_b0() + (@find_b1()*x)
   
+-- One Way ANOVA
+export class ANOVA
+  new: (anovadesign) =>
+    @anovadesign = anovadesign
+    
+    @cols = 0
+    for i,j in pairs @anovadesign
+      @cols +=1
+      
+    @totalmean = {}
+    @dfc = @cols - 1
+    
+    @N = 0
+    for i,j in pairs @anovadesign
+      for k in *j
+        @N += 1
+        table.insert @totalmean, k
+    
+    @totalmean = mean(@totalmean)
+    
+    @dfe = @N - @cols
+    @dft = @N - 1 
+    
+  cal_ssc: =>
+    ssc = {}
+    for i,j in pairs @anovadesign
+      imean = mean(j)
+      sc = #j * ((imean-@totalmean)^2)
+      table.insert ssc, sc
+    return sum(ssc)
+  
+  cal_sst: =>
+    sst = {}
+    for i,j in pairs @anovadesign
+      for k in *j
+        table.insert sst, (k-@totalmean)^2
+    return sum(sst)
+    
+  cal_sse: =>
+    return @cal_sst() - @cal_ssc()
+    
+  cal_msc: =>
+    return @cal_ssc() / @dfc
+    
+  cal_mse: =>
+    return @cal_sse() / @dfe
+  
+  f_value: =>
+    return @cal_msc() / @cal_mse()
+    
+  summary: =>
+    print "ANOVA Table\n"
+    print "------------------------------\n"
+    print "Source \t\t df \t\t SS   \t\t MS   \t\t F\n"
+    print "Between \t\t #{@dfc} \t\t #{string.format "%6.4f", @cal_ssc()} \t\t #{string.format "%6.4f", @cal_msc()} \t\t #{string.format "%6.4f", @f_value()}\n"
+    print "Error \t\t #{@dfe} \t\t #{string.format "%6.4f", @cal_sse()} \t\t #{string.format "%6.4f", @cal_mse()}\n"    
+    print "Between \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}"
+    
+
+-- One Sample T test
+export class OneSampleTTest
+  new: (arr, mu) =>
+    @xbar = mean(arr)
+    @s = std(arr)
+    @N = #arr
+    @mu = mu
+    
+  t_stat: =>
+    return (@xbar - @mu)/ (@s / math.sqrt @N)
+  
+  summary: =>
+    print "t-Test of a single population: mu = #{@mu}\n"
+    print "-------------------------------\n"
+    print "Variable \t\t N \t\t Mean \t\t StD \t\t\t T\n"
+    print "Weight \t\t #{@N} \t\t #{string.format "%6.4f", @xbar} \t\t #{string.format "%6.4f", @s} \t\t #{string.format "%6.4f", @t_stat()}\n"
+    
+    
+export class TwoSampleTTest
+  new: (arr1, arr2, equal=true) =>
+    @xbar1 = mean(arr1)
+    @xbar2 = mean(arr2)
+    @s1 = std(arr1)
+    @s2 = std(arr2)
+    @N1 = #arr1
+    @N2 = #arr2
+    @equal = equal
+    
+    if @equal == true
+      @df = (@N1 + @N2 - 2)
+    else
+      numerator = math.pow ((@s1^2)/@N1) + ((@s2^2)/@N2), 2
+      deno = ((((@s1^2)/@N1)^2)/(@N1 - 1)) + ((((@s2^2)/@N2)^2)/(@N2 - 1))
+      @df = numerator / deno
+    
+  t_stat: =>
+    if @equal == true
+      numerator = (@xbar1 - @xbar2)
+      deno1 = math.sqrt (((@s1^2)*(@N1 - 1)) + ((@s2^2)*(@N2 - 1))) / @df
+      deno2 = math.sqrt ((1/@N1) + (1/@N2))
+      return  numerator / (deno1 * deno2)
+    else
+      numerator = (@xbar1 - @xbar2)
+      deno = math.sqrt ((@s1^2)/@N1) + ((@s2^2)/@N2)
+      return numerator / deno
+  
+  summary: =>
+    if @equal == true
+      print "t-Test of two populations assuming equal variances\n"
+      print "--------------------------\n"
+      print "Hypothesized Mean Difference = 0\n"
+      print "        \t\t N \t\t Mean \t\t StD\n"
+      print "Method A \t\t #{@N1} \t\t #{string.format "%6.4f", @xbar1} \t\t #{string.format "%6.4f", @s1}\n"
+      print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
+      print "df = #{@df}"
+      print "t-Stat = #{string.format "%6.2f", @t_stat()}"
+    else
+      print "t-Test of two populations assuming *unequal variances\n"
+      print "--------------------------\n"
+      print "Hypothesized Mean Difference = 0\n"
+      print "        \t\t N \t\t Mean \t\t StD\n"
+      print "Method A \t\t #{@N1} \t\t #{string.format "%6.4f", @xbar1} \t\t #{string.format "%6.4f", @s1}\n"
+      print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
+      print "df = #{@df}"
+      print "t-Stat = #{string.format "%6.2f", @t_stat()}"

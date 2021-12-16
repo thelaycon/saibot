@@ -20,7 +20,7 @@ var = function(arr)
     local xs = math.pow(i - mean_, 2)
     xsquared = xsquared + xs
   end
-  return xsquared / #arr
+  return xsquared / (#arr - 1)
 end
 std = function(arr)
   return math.sqrt(var(arr))
@@ -170,4 +170,187 @@ do
   })
   _base_0.__class = _class_0
   LinearRegression = _class_0
+end
+do
+  local _class_0
+  local _base_0 = {
+    cal_ssc = function(self)
+      local ssc = { }
+      for i, j in pairs(self.anovadesign) do
+        local imean = mean(j)
+        local sc = #j * ((imean - self.totalmean) ^ 2)
+        table.insert(ssc, sc)
+      end
+      return sum(ssc)
+    end,
+    cal_sst = function(self)
+      local sst = { }
+      for i, j in pairs(self.anovadesign) do
+        for _index_0 = 1, #j do
+          local k = j[_index_0]
+          table.insert(sst, (k - self.totalmean) ^ 2)
+        end
+      end
+      return sum(sst)
+    end,
+    cal_sse = function(self)
+      return self:cal_sst() - self:cal_ssc()
+    end,
+    cal_msc = function(self)
+      return self:cal_ssc() / self.dfc
+    end,
+    cal_mse = function(self)
+      return self:cal_sse() / self.dfe
+    end,
+    f_value = function(self)
+      return self:cal_msc() / self:cal_mse()
+    end,
+    summary = function(self)
+      print("ANOVA Table\n")
+      print("------------------------------\n")
+      print("Source \t\t df \t\t SS   \t\t MS   \t\t F\n")
+      print("Between \t\t " .. tostring(self.dfc) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_ssc())) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_msc())) .. " \t\t " .. tostring(string.format("%6.4f", self:f_value())) .. "\n")
+      print("Error \t\t " .. tostring(self.dfe) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sse())) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_mse())) .. "\n")
+      return print("Between \t\t " .. tostring(self.dft) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sst())))
+    end
+  }
+  _base_0.__index = _base_0
+  _class_0 = setmetatable({
+    __init = function(self, anovadesign)
+      self.anovadesign = anovadesign
+      self.cols = 0
+      for i, j in pairs(self.anovadesign) do
+        self.cols = self.cols + 1
+      end
+      self.totalmean = { }
+      self.dfc = self.cols - 1
+      self.N = 0
+      for i, j in pairs(self.anovadesign) do
+        for _index_0 = 1, #j do
+          local k = j[_index_0]
+          self.N = self.N + 1
+          table.insert(self.totalmean, k)
+        end
+      end
+      self.totalmean = mean(self.totalmean)
+      self.dfe = self.N - self.cols
+      self.dft = self.N - 1
+    end,
+    __base = _base_0,
+    __name = "ANOVA"
+  }, {
+    __index = _base_0,
+    __call = function(cls, ...)
+      local _self_0 = setmetatable({}, _base_0)
+      cls.__init(_self_0, ...)
+      return _self_0
+    end
+  })
+  _base_0.__class = _class_0
+  ANOVA = _class_0
+end
+do
+  local _class_0
+  local _base_0 = {
+    t_stat = function(self)
+      return (self.xbar - self.mu) / (self.s / math.sqrt(self.N))
+    end,
+    summary = function(self)
+      print("t-Test of a single population: mu = " .. tostring(self.mu) .. "\n")
+      print("-------------------------------\n")
+      print("Variable \t\t N \t\t Mean \t\t StD \t\t\t T\n")
+      return print("Weight \t\t " .. tostring(self.N) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar)) .. " \t\t " .. tostring(string.format("%6.4f", self.s)) .. " \t\t " .. tostring(string.format("%6.4f", self:t_stat())) .. "\n")
+    end
+  }
+  _base_0.__index = _base_0
+  _class_0 = setmetatable({
+    __init = function(self, arr, mu)
+      self.xbar = mean(arr)
+      self.s = std(arr)
+      self.N = #arr
+      self.mu = mu
+    end,
+    __base = _base_0,
+    __name = "OneSampleTTest"
+  }, {
+    __index = _base_0,
+    __call = function(cls, ...)
+      local _self_0 = setmetatable({}, _base_0)
+      cls.__init(_self_0, ...)
+      return _self_0
+    end
+  })
+  _base_0.__class = _class_0
+  OneSampleTTest = _class_0
+end
+do
+  local _class_0
+  local _base_0 = {
+    t_stat = function(self)
+      if self.equal == true then
+        local numerator = (self.xbar1 - self.xbar2)
+        local deno1 = math.sqrt((((self.s1 ^ 2) * (self.N1 - 1)) + ((self.s2 ^ 2) * (self.N2 - 1))) / self.df)
+        local deno2 = math.sqrt(((1 / self.N1) + (1 / self.N2)))
+        return numerator / (deno1 * deno2)
+      else
+        local numerator = (self.xbar1 - self.xbar2)
+        local deno = math.sqrt(((self.s1 ^ 2) / self.N1) + ((self.s2 ^ 2) / self.N2))
+        return numerator / deno
+      end
+    end,
+    summary = function(self)
+      if self.equal == true then
+        print("t-Test of two populations assuming equal variances\n")
+        print("--------------------------\n")
+        print("Hypothesized Mean Difference = 0\n")
+        print("        \t\t N \t\t Mean \t\t StD\n")
+        print("Method A \t\t " .. tostring(self.N1) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar1)) .. " \t\t " .. tostring(string.format("%6.4f", self.s1)) .. "\n")
+        print("Method B \t\t " .. tostring(self.N2) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar2)) .. " \t\t " .. tostring(string.format("%6.4f", self.s2)) .. "\n")
+        print("df = " .. tostring(self.df))
+        return print("t-Stat = " .. tostring(string.format("%6.2f", self:t_stat())))
+      else
+        print("t-Test of two populations assuming *unequal variances\n")
+        print("--------------------------\n")
+        print("Hypothesized Mean Difference = 0\n")
+        print("        \t\t N \t\t Mean \t\t StD\n")
+        print("Method A \t\t " .. tostring(self.N1) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar1)) .. " \t\t " .. tostring(string.format("%6.4f", self.s1)) .. "\n")
+        print("Method B \t\t " .. tostring(self.N2) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar2)) .. " \t\t " .. tostring(string.format("%6.4f", self.s2)) .. "\n")
+        print("df = " .. tostring(self.df))
+        return print("t-Stat = " .. tostring(string.format("%6.2f", self:t_stat())))
+      end
+    end
+  }
+  _base_0.__index = _base_0
+  _class_0 = setmetatable({
+    __init = function(self, arr1, arr2, equal)
+      if equal == nil then
+        equal = true
+      end
+      self.xbar1 = mean(arr1)
+      self.xbar2 = mean(arr2)
+      self.s1 = std(arr1)
+      self.s2 = std(arr2)
+      self.N1 = #arr1
+      self.N2 = #arr2
+      self.equal = equal
+      if self.equal == true then
+        self.df = (self.N1 + self.N2 - 2)
+      else
+        local numerator = math.pow(((self.s1 ^ 2) / self.N1) + ((self.s2 ^ 2) / self.N2), 2)
+        local deno = ((((self.s1 ^ 2) / self.N1) ^ 2) / (self.N1 - 1)) + ((((self.s2 ^ 2) / self.N2) ^ 2) / (self.N2 - 1))
+        self.df = numerator / deno
+      end
+    end,
+    __base = _base_0,
+    __name = "TwoSampleTTest"
+  }, {
+    __index = _base_0,
+    __call = function(cls, ...)
+      local _self_0 = setmetatable({}, _base_0)
+      cls.__init(_self_0, ...)
+      return _self_0
+    end
+  })
+  _base_0.__class = _class_0
+  TwoSampleTTest = _class_0
 end
