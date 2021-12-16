@@ -73,6 +73,7 @@ model = ANOVA({"1":{6.33, 6.26, 6.31, 6.29, 6.40}, "2":{6.26, 6.36, 6.23, 6.27, 
   
 print model\summary()
 
+```
 
 |Source   | df 		| SS  | 		 MS  | 		 F|
 |---|---|---|---|---|
@@ -80,7 +81,6 @@ print model\summary()
 |Error 		|  20 	|	 0.1549 |	0.0077| |
 |Total 	|	23 		| 0.3915| | |
 
-```
 
 More ANOVA functions:
 
