@@ -75,11 +75,11 @@ print model\summary()
 
 Source 		 df 		 SS   		 MS   		 F
 
-Between 		 3 		 0.2366 		 0.0789 		 10.1810
+Between 		3 		  0.2366 	0.0789 	10.1810
 
-Error 		 20 		 0.1549 		 0.0077
+Error 		  20 		 0.1549 	0.0077
 
-Between 		 23 		 0.3915
+Between 		23 		0.3915
 
 ```
 
@@ -109,7 +109,7 @@ t-Test of a single population: mu = 25
 
 Variable 		 N 		 Mean 		 StD 			 T
 
-Weight 		 20 		 25.5100 		 2.1933 		 1.0399
+Weight 		   20 		25.5100 2.1933 	1.0399
 ```
 
 
@@ -129,7 +129,7 @@ t-Test of two populations assuming equal variances
 
 Hypothesized Mean Difference = 0
 
-        		 N 		 Mean 		 StD
+        		  N 		  Mean 		    StD
 
 Method A 		 15 		 47.7333 		 4.4153
 
@@ -149,7 +149,7 @@ t-Test of two populations assuming *unequal variances
 
 Hypothesized Mean Difference = 0
 
-        		 N 		 Mean 		 StD
+        		  N 		  Mean 		    StD
 
 Method A 		 15 		 47.7333 		 4.4153
 
