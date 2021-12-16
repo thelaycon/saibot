@@ -53,7 +53,7 @@ range(arr) -- Calculates range of arr.
 # Inferential Statistics
 
 
-**Linear Regression:**
+***Linear Regression:***
 
 MoonScript:
 
@@ -64,7 +64,7 @@ print model\predict(x) -- Predicts the y value for x
 ```
 
 
-**One Way ANOVA**
+***One Way ANOVA***
 
 MoonScript:
 
@@ -94,7 +94,7 @@ model.f_value() -- Calculates F Value
 ```
 
 
-**t-Test for a single sample**
+***t-Test for a single sample***
 
 MoonScript:
 
@@ -102,17 +102,18 @@ MoonScript:
 model = OneSampleTTest({22.6, 27.0, 26.2, 25.8, 22.2, 26.6, 25.3, 30.4, 23.2, 23.1, 28.1, 28.6, 27.4, 26.9, 24.2, 23.5, 24.5, 24.9, 26.1, 23.6}, 25)
 model\summary()
 
-t-Test of a single population: mu = 25
+```
+
+*t-Test of a single population: mu = 25*
 
 -------------------------------
 
-Variable 		 N 		 Mean 		 StD 			 T
+Variable 	|	 N 	|	 Mean |		 StD |			 T
+|---|---|---|---|---|
+Weight 	|	   20 |		25.5100 | 2.1933 |	1.0399
 
-Weight 		   20 		25.5100 2.1933 	1.0399
-```
 
-
-**t-Test for two sample**
+***t-Test for two sample***
 
 MoonScript:
 
@@ -121,40 +122,38 @@ MoonScript:
 
 model = TwoSampleTTest({56, 50, 52, 44, 52, 47, 47, 53, 45, 48, 42, 51, 42, 43, 44}, {59, 54, 55, 65, 52, 57, 64, 53, 53, 56, 53, 57})
 model\summary()
+```
 
-t-Test of two populations assuming equal variances
+*t-Test of two populations assuming equal variances*
 
 --------------------------
 
 Hypothesized Mean Difference = 0
 
-        		  N 		  Mean 		    StD
+|        		 | N 		|  Mean |		    StD|
+|---|---|---|---|
+|Method A 	|	 15 |		 47.7333 |		 4.4153|
+|Method B 		 |12 		| 56.5000 	|	 4.2747|
+|df = 25|
+|t-Stat =  -5.20|
 
-Method A 		 15 		 47.7333 		 4.4153
 
-Method B 		 12 		 56.5000 		 4.2747
-
-df = 25
-t-Stat =  -5.20
-
+```
 -- Assuming unequal variances
 
 model = TwoSampleTTest({56, 50, 52, 44, 52, 47, 47, 53, 45, 48, 42, 51, 42, 43, 44}, {59, 54, 55, 65, 52, 57, 64, 53, 53, 56, 53, 57}, false)
 model\summary()
+```
 
-t-Test of two populations assuming *unequal variances
+*t-Test of two populations assuming unequal variances*
 
 --------------------------
 
 Hypothesized Mean Difference = 0
 
-        		  N 		  Mean 		    StD
-
-Method A 		 15 		 47.7333 		 4.4153
-
-Method B 		 12 		 56.5000 		 4.2747
-
-df = 24.034065489287
-t-Stat =  -5.22
-
-```
+|       |N 		|  Mean |		    StD|
+|---|---|---|---|
+|Method A |		 15 	|	 47.7333 	|	 4.4153|
+|Method B |		 12 	|	 56.5000 	|	 4.2747|
+|df = 24.034065489287|
+|t-Stat =  -5.22|
