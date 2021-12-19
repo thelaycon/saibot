@@ -186,3 +186,8 @@ Hypothesized Mean Difference = 0
 |Method B |		 12 	|	 56.5000 	|	 4.2747|
 |df = 24.034065489287|
 |t-Stat =  -5.22|
+
+
+
+#References
+Ken Black, 2010. Business Statistics For Cotemporary Decision Making.
