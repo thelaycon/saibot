@@ -1,6 +1,6 @@
 -- A Lua statistics module
 math = require "math"
-f_critical = require "saistats"
+saistats = require "saistats"
 
 -- Computes sum of a table
 export sum = (arr) ->
@@ -161,14 +161,19 @@ export class ANOVA
     return @cal_msc() / @cal_mse()
     
   summary: =>
-    FC = f_critical.f(0.05, @dfc, @dfe)
+    FC = saistats.f(0.05, @dfc, @dfe)
     print "ANOVA Table\n"
     print "------------------------------\n"
-    print "Source \t\t df \t\t SS   \t\t MS   \t\t F\n"
-    print "Between \t\t #{@dfc} \t\t #{string.format "%6.4f", @cal_ssc()} \t\t #{string.format "%6.4f", @cal_msc()} \t\t #{string.format "%6.4f", @f_value()}\n"
-    print "Error \t\t #{@dfe} \t\t #{string.format "%6.4f", @cal_sse()} \t\t #{string.format "%6.4f", @cal_mse()}\n"    
-    print "Total \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}"
-    print "F Critical (Alpha=0.05) =====> #{FC}"
+    print "Source  \t\t df \t\t SS \t\t MS \t\tF\n"
+    print "Between \t\t #{@dfc} \t\t #{string.format "%6.4f", @cal_ssc()}   \t#{string.format "%6.4f", @cal_msc()} \t\t#{string.format "%6.4f", @f_value()}\n"
+    print "Error   \t\t #{@dfe} \t\t #{string.format "%6.4f", @cal_sse()}   \t#{string.format "%6.4f", @cal_mse()}\n"    
+    print "Total   \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}\n"
+    print "F Critical (Alpha=0.05) =====> #{string.format "%6.4f", FC}\n"
+    
+    if @f_value() < FC
+      print "Conclusion: Accept NULL Hypothesis.\n"
+    else
+      print "Conclusion: Reject NULL Hypothesis.\n"
     
 
 -- One Sample T test
@@ -235,7 +240,9 @@ export class TwoSampleTTest
       print "Method A \t\t #{@N1} \t\t #{string.format "%6.4f", @xbar1} \t\t #{string.format "%6.4f", @s1}\n"
       print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
       print "df = #{@df}"
-      print "t-Stat = #{string.format "%6.2f", @t_stat()}"
+      print "t-Stat = #{string.format "%6.2f", @t_stat()}" 
       
+      
+--  model = ANOVA({"1":{6.33, 6.26, 6.31, 6.29, 6.40}, "2":{6.26, 6.36, 6.23, 6.27, 6.19, 6.50, 6.19, 6.22}, "3":{6.44, 6.38, 6.58, 6.54, 6.56, 6.34, 6.58}, "4":{6.29, 6.23, 6.19, 6.21}})
   
-print f_critical.f(0.05, 8, 10)
+-- print model\summary()

@@ -5,6 +5,33 @@ Noob Saibot always felt like a cheatcode, I needed a similar solution to simple 
 Saibot is a statistics library for Lua and currently supports a few descriptive and inferential statistics techniques.
 
 
+# Compilation
+
+Saibot relies on C++ libraries particularly the Boost libraries for quick statistical analysis. It is important to have the C++ Boost Libraries in path before compiling the C++ modules. The Lua binaries should also be included in the working directory before compilation of C++ modules for Saibot.
+
+You should have the needed Lua C headers under a directory called `lua54` relatively to where the C++ file exists. 
+
+Window users should have `lua54.dll` in the compilation directory.
+
+### Linux
+
+```
+Example 
+
+g++ -shared -o saistats.so -llua saistats.cpp
+
+```
+
+### Windows
+
+```
+Example
+
+g++ -shared -o saistats.dll lua54.dll saistats.cpp
+
+```
+
+
 # Usage
 
 Import Saibot
@@ -80,6 +107,8 @@ print model\summary()
 |Between |		3 	|	  0.2366 |	0.0789 |	10.1810|
 |Error 		|  20 	|	 0.1549 |	0.0077| |
 |Total 	|	23 		| 0.3915| | |
+F Critical (Alpha=0.05) =====> 3.0984
+Conclusion: Reject NULL Hypothesis.
 
 
 More ANOVA functions:
