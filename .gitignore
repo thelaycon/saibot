@@ -1,3 +1,2 @@
-./lua54
-./saistats.dll
-./lua54.dll
+lua54
+*.dll
