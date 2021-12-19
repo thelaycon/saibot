@@ -1,4 +1,5 @@
-require("math")
+local math = require("math")
+local f_critical = require("saistats")
 sum = function(arr)
   local total = 0
   for _index_0 = 1, #arr do
@@ -206,12 +207,14 @@ do
       return self:cal_msc() / self:cal_mse()
     end,
     summary = function(self)
+      local FC = f_critical.f(0.05, self.dfc, self.dfe)
       print("ANOVA Table\n")
       print("------------------------------\n")
       print("Source \t\t df \t\t SS   \t\t MS   \t\t F\n")
       print("Between \t\t " .. tostring(self.dfc) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_ssc())) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_msc())) .. " \t\t " .. tostring(string.format("%6.4f", self:f_value())) .. "\n")
       print("Error \t\t " .. tostring(self.dfe) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sse())) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_mse())) .. "\n")
-      return print("Between \t\t " .. tostring(self.dft) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sst())))
+      print("Total \t\t " .. tostring(self.dft) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sst())))
+      return print("F Critical (Alpha=0.05) =====> " .. tostring(FC))
     end
   }
   _base_0.__index = _base_0
@@ -354,3 +357,4 @@ do
   _base_0.__class = _class_0
   TwoSampleTTest = _class_0
 end
+return print(f_critical.f(0.05, 8, 10))

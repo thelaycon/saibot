@@ -1,6 +1,6 @@
 -- A Lua statistics module
-require("math")
-
+math = require "math"
+f_critical = require "saistats"
 
 -- Computes sum of a table
 export sum = (arr) ->
@@ -161,12 +161,14 @@ export class ANOVA
     return @cal_msc() / @cal_mse()
     
   summary: =>
+    FC = f_critical.f(0.05, @dfc, @dfe)
     print "ANOVA Table\n"
     print "------------------------------\n"
     print "Source \t\t df \t\t SS   \t\t MS   \t\t F\n"
     print "Between \t\t #{@dfc} \t\t #{string.format "%6.4f", @cal_ssc()} \t\t #{string.format "%6.4f", @cal_msc()} \t\t #{string.format "%6.4f", @f_value()}\n"
     print "Error \t\t #{@dfe} \t\t #{string.format "%6.4f", @cal_sse()} \t\t #{string.format "%6.4f", @cal_mse()}\n"    
-    print "Between \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}"
+    print "Total \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}"
+    print "F Critical (Alpha=0.05) =====> #{FC}"
     
 
 -- One Sample T test
@@ -234,3 +236,6 @@ export class TwoSampleTTest
       print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
       print "df = #{@df}"
       print "t-Stat = #{string.format "%6.2f", @t_stat()}"
+      
+  
+print f_critical.f(0.05, 8, 10)
