@@ -207,15 +207,14 @@ do
       return self:cal_msc() / self:cal_mse()
     end,
     summary = function(self)
-      local FC = saistats.f(0.05, self.dfc, self.dfe)
       print("ANOVA Table\n")
       print("------------------------------\n")
       print("Source  \t\t df \t\t SS \t\t MS \t\tF\n")
       print("Between \t\t " .. tostring(self.dfc) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_ssc())) .. "   \t" .. tostring(string.format("%6.4f", self:cal_msc())) .. " \t\t" .. tostring(string.format("%6.4f", self:f_value())) .. "\n")
       print("Error   \t\t " .. tostring(self.dfe) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sse())) .. "   \t" .. tostring(string.format("%6.4f", self:cal_mse())) .. "\n")
       print("Total   \t\t " .. tostring(self.dft) .. " \t\t " .. tostring(string.format("%6.4f", self:cal_sst())) .. "\n")
-      print("F Critical (Alpha=0.05) =====> " .. tostring(string.format("%6.4f", FC)) .. "\n")
-      if self:f_value() < FC then
+      print("F Critical (Alpha=0.05) =====> " .. tostring(string.format("%6.4f", self.f_critical)) .. "\n")
+      if self:f_value() < self.f_critical then
         return print("Conclusion: Accept NULL Hypothesis.\n")
       else
         return print("Conclusion: Reject NULL Hypothesis.\n")
@@ -243,6 +242,7 @@ do
       self.totalmean = mean(self.totalmean)
       self.dfe = self.N - self.cols
       self.dft = self.N - 1
+      self.f_critical = saistats.f(0.05, self.dfc, self.dfe)
     end,
     __base = _base_0,
     __name = "ANOVA"
@@ -294,6 +294,12 @@ end
 do
   local _class_0
   local _base_0 = {
+    t_critical005 = function(self)
+      return saistats.t(0.05, self.df)
+    end,
+    t_critical0025 = function(self)
+      return saistats.t(0.025, self.df)
+    end,
     t_stat = function(self)
       if self.equal == true then
         local numerator = (self.xbar1 - self.xbar2)
@@ -315,7 +321,9 @@ do
         print("Method A \t\t " .. tostring(self.N1) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar1)) .. " \t\t " .. tostring(string.format("%6.4f", self.s1)) .. "\n")
         print("Method B \t\t " .. tostring(self.N2) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar2)) .. " \t\t " .. tostring(string.format("%6.4f", self.s2)) .. "\n")
         print("df = " .. tostring(self.df))
-        return print("t-Stat = " .. tostring(string.format("%6.2f", self:t_stat())))
+        print("t-Stat = " .. tostring(string.format("%6.2f", self:t_stat())))
+        print("t-Critical (One sided) = " .. tostring(string.format("%6.2f", self:t_critical005())))
+        return print("t-Critical (Two sided) = " .. tostring(string.format("%6.2f", self:t_critical0025())))
       else
         print("t-Test of two populations assuming *unequal variances\n")
         print("--------------------------\n")
@@ -324,7 +332,9 @@ do
         print("Method A \t\t " .. tostring(self.N1) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar1)) .. " \t\t " .. tostring(string.format("%6.4f", self.s1)) .. "\n")
         print("Method B \t\t " .. tostring(self.N2) .. " \t\t " .. tostring(string.format("%6.4f", self.xbar2)) .. " \t\t " .. tostring(string.format("%6.4f", self.s2)) .. "\n")
         print("df = " .. tostring(self.df))
-        return print("t-Stat = " .. tostring(string.format("%6.2f", self:t_stat())))
+        print("t-Stat = " .. tostring(string.format("%6.2f", self:t_stat())))
+        print("t-Critical (One sided) = " .. tostring(string.format("%6.2f", self:t_critical005())))
+        return print("t-Critical (Two sided) = " .. tostring(string.format("%6.2f", self:t_critical0025())))
       end
     end
   }

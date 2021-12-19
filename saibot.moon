@@ -133,6 +133,8 @@ export class ANOVA
     @dfe = @N - @cols
     @dft = @N - 1 
     
+    @f_critical = saistats.f(0.05, @dfc, @dfe)
+    
   cal_ssc: =>
     ssc = {}
     for i,j in pairs @anovadesign
@@ -161,16 +163,15 @@ export class ANOVA
     return @cal_msc() / @cal_mse()
     
   summary: =>
-    FC = saistats.f(0.05, @dfc, @dfe)
     print "ANOVA Table\n"
     print "------------------------------\n"
     print "Source  \t\t df \t\t SS \t\t MS \t\tF\n"
     print "Between \t\t #{@dfc} \t\t #{string.format "%6.4f", @cal_ssc()}   \t#{string.format "%6.4f", @cal_msc()} \t\t#{string.format "%6.4f", @f_value()}\n"
     print "Error   \t\t #{@dfe} \t\t #{string.format "%6.4f", @cal_sse()}   \t#{string.format "%6.4f", @cal_mse()}\n"    
     print "Total   \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}\n"
-    print "F Critical (Alpha=0.05) =====> #{string.format "%6.4f", FC}\n"
+    print "F Critical (Alpha=0.05) =====> #{string.format "%6.4f", @f_critical}\n"
     
-    if @f_value() < FC
+    if @f_value() < @f_critical
       print "Conclusion: Accept NULL Hypothesis.\n"
     else
       print "Conclusion: Reject NULL Hypothesis.\n"
@@ -211,6 +212,12 @@ export class TwoSampleTTest
       deno = ((((@s1^2)/@N1)^2)/(@N1 - 1)) + ((((@s2^2)/@N2)^2)/(@N2 - 1))
       @df = numerator / deno
     
+  t_critical005: =>
+    return saistats.t(0.05, @df)
+  
+  t_critical0025: =>
+    return saistats.t(0.025, @df)
+    
   t_stat: =>
     if @equal == true
       numerator = (@xbar1 - @xbar2)
@@ -232,6 +239,8 @@ export class TwoSampleTTest
       print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
       print "df = #{@df}"
       print "t-Stat = #{string.format "%6.2f", @t_stat()}"
+      print "t-Critical (One sided) = #{string.format "%6.2f", @t_critical005()}" 
+      print "t-Critical (Two sided) = #{string.format "%6.2f", @t_critical0025()}" 
     else
       print "t-Test of two populations assuming *unequal variances\n"
       print "--------------------------\n"
@@ -241,8 +250,11 @@ export class TwoSampleTTest
       print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
       print "df = #{@df}"
       print "t-Stat = #{string.format "%6.2f", @t_stat()}" 
-      
-      
+      print "t-Critical (One sided) = #{string.format "%6.2f", @t_critical005()}" 
+      print "t-Critical (Two sided) = #{string.format "%6.2f", @t_critical0025()}" 
 --  model = ANOVA({"1":{6.33, 6.26, 6.31, 6.29, 6.40}, "2":{6.26, 6.36, 6.23, 6.27, 6.19, 6.50, 6.19, 6.22}, "3":{6.44, 6.38, 6.58, 6.54, 6.56, 6.34, 6.58}, "4":{6.29, 6.23, 6.19, 6.21}})
   
 -- print model\summary()
+
+-- model = TwoSampleTTest({56, 50, 52, 44, 52, 47, 47, 53, 45, 48, 42, 51, 42, 43, 44}, {59, 54, 55, 65, 52, 57, 64, 53, 53, 56, 53, 57}, false)
+-- model\summary()

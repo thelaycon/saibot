@@ -165,7 +165,8 @@ Hypothesized Mean Difference = 0
 |Method B 		 |12 		| 56.5000 	|	 4.2747|
 |df = 25|
 |t-Stat =  -5.20|
-
+|t-Critical (One sided) =   1.71
+|t-Critical (Two sided) =   2.06
 
 ```
 -- Assuming unequal variances
@@ -186,8 +187,11 @@ Hypothesized Mean Difference = 0
 |Method B |		 12 	|	 56.5000 	|	 4.2747|
 |df = 24.034065489287|
 |t-Stat =  -5.22|
+|t-Critical (One sided) =   1.71
+|t-Critical (Two sided) =   2.06
 
 
+========================================================================================================
 
 # References
 Ken Black, 2010. Business Statistics For Cotemporary Decision Making.
