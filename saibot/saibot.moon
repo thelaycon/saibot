@@ -1,6 +1,6 @@
 -- A Lua statistics module
-math = require "math"
-saistats = require "saistats"
+saistats = require "saibot.saistats"
+
 
 -- Computes sum of a table
 export sum = (arr) ->
@@ -252,9 +252,26 @@ export class TwoSampleTTest
       print "t-Stat = #{string.format "%6.2f", @t_stat()}" 
       print "t-Critical (One sided) = #{string.format "%6.2f", @t_critical005()}" 
       print "t-Critical (Two sided) = #{string.format "%6.2f", @t_critical0025()}" 
+
 --  model = ANOVA({"1":{6.33, 6.26, 6.31, 6.29, 6.40}, "2":{6.26, 6.36, 6.23, 6.27, 6.19, 6.50, 6.19, 6.22}, "3":{6.44, 6.38, 6.58, 6.54, 6.56, 6.34, 6.58}, "4":{6.29, 6.23, 6.19, 6.21}})
   
 -- print model\summary()
 
 -- model = TwoSampleTTest({56, 50, 52, 44, 52, 47, 47, 53, 45, 48, 42, 51, 42, 43, 44}, {59, 54, 55, 65, 52, 57, 64, 53, 53, 56, 53, 57}, false)
 -- model\summary()
+
+return {
+	sum:sum,
+	mean:mean,
+	var:var,
+	std:std,
+	mode:mode,
+	median:median,
+	range:range,
+	corr:corr,
+	LinearRegression:LinearRegression,
+	ANOVA:ANOVA,
+	OneSampleTTest:OneSampleTTest,
+	TwoSampleTTest:TwoSampleTTest,
+	}
+

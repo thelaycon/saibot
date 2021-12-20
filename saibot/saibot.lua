@@ -1,5 +1,4 @@
-local math = require("math")
-local saistats = require("saistats")
+local saistats = require("saibot.saistats")
 sum = function(arr)
   local total = 0
   for _index_0 = 1, #arr do
@@ -372,3 +371,17 @@ do
   _base_0.__class = _class_0
   TwoSampleTTest = _class_0
 end
+return {
+  sum = sum,
+  mean = mean,
+  var = var,
+  std = std,
+  mode = mode,
+  median = median,
+  range = range,
+  corr = corr,
+  LinearRegression = LinearRegression,
+  ANOVA = ANOVA,
+  OneSampleTTest = OneSampleTTest,
+  TwoSampleTTest = TwoSampleTTest
+}

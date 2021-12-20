@@ -65,7 +65,7 @@ static const struct luaL_Reg Functions[] =
 
 
 
-extern "C" int luaopen_saistats(lua_State *L)
+extern "C" int luaopen_saibot_saistats(lua_State *L)
     {
     lua_newtable(L); /* this is the module table */
 
