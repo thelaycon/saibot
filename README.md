@@ -42,7 +42,7 @@ Lua:
 
 local s = require("saibot")
 
-print(s.saibot.mean({1,2,4})
+print(s.saibot.mean({1,2,4}))
 
 
 ```
