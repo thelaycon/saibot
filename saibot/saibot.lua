@@ -1,4 +1,5 @@
 local saistats = require("saibot.saistats")
+local sum
 sum = function(arr)
   local total = 0
   for _index_0 = 1, #arr do
@@ -7,12 +8,17 @@ sum = function(arr)
   end
   return total
 end
+local mean
 mean = function(arr)
   local total = 0
   total = sum(arr)
   return total / #arr
 end
-var = function(arr)
+local var
+var = function(arr, sample)
+  if sample == nil then
+    sample = false
+  end
   local mean_ = mean(arr)
   local xsquared = 0
   for _index_0 = 1, #arr do
@@ -20,10 +26,18 @@ var = function(arr)
     local xs = math.pow(i - mean_, 2)
     xsquared = xsquared + xs
   end
-  return xsquared / (#arr - 1)
+  if sample == true then
+    return xsquared / (#arr - 1)
+  else
+    return xsquared / (#arr)
+  end
 end
-std = function(arr)
-  return math.sqrt(var(arr))
+local std
+std = function(arr, sample)
+  if sample == nil then
+    sample = false
+  end
+  return math.sqrt(var(arr, sample))
 end
 local exists_in
 exists_in = function(a, arr)
@@ -45,6 +59,7 @@ get_keys_values = function(arr)
   end
   return keys, values
 end
+local mode
 mode = function(arr)
   local track = { }
   local mode_table = { }
@@ -57,14 +72,15 @@ mode = function(arr)
     end
   end
   local keys, values = get_keys_values(track)
-  local max_value = math.max(unpack(values))
+  local max_value = math.max(table.unpack(values))
   for i, k in pairs(track) do
     if k == max_value then
       table.insert(mode_table, i)
     end
   end
-  return math.min(unpack(mode_table))
+  return math.min((table.unpack(mode_table)))
 end
+local median
 median = function(arr)
   table.sort(arr)
   if #arr % 2 ~= 0 then
@@ -73,9 +89,11 @@ median = function(arr)
     return (arr[#arr / 2] + arr[#arr / 2 + 1]) / 2
   end
 end
+local range
 range = function(arr)
-  return math.max(unpack(arr)) - math.min(unpack(arr))
+  return math.max(table.unpack(arr)) - math.min(table.unpack(arr))
 end
+local corr
 corr = function(xarr, yarr)
   local xmean = mean(xarr)
   local ymean = mean(yarr)
@@ -115,6 +133,7 @@ corr = function(xarr, yarr)
   end
   return xdev_ydev / (math.sqrt(xdev2_ydev2))
 end
+local LinearRegression
 do
   local _class_0
   local _base_0 = {
@@ -171,6 +190,7 @@ do
   _base_0.__class = _class_0
   LinearRegression = _class_0
 end
+local ANOVA
 do
   local _class_0
   local _base_0 = {
@@ -256,6 +276,7 @@ do
   _base_0.__class = _class_0
   ANOVA = _class_0
 end
+local OneSampleTTest
 do
   local _class_0
   local _base_0 = {
@@ -273,7 +294,7 @@ do
   _class_0 = setmetatable({
     __init = function(self, arr, mu)
       self.xbar = mean(arr)
-      self.s = std(arr)
+      self.s = std(arr, true)
       self.N = #arr
       self.mu = mu
     end,
@@ -290,6 +311,7 @@ do
   _base_0.__class = _class_0
   OneSampleTTest = _class_0
 end
+local TwoSampleTTest
 do
   local _class_0
   local _base_0 = {
@@ -345,8 +367,8 @@ do
       end
       self.xbar1 = mean(arr1)
       self.xbar2 = mean(arr2)
-      self.s1 = std(arr1)
-      self.s2 = std(arr2)
+      self.s1 = std(arr1, true)
+      self.s2 = std(arr2, true)
       self.N1 = #arr1
       self.N2 = #arr2
       self.equal = equal

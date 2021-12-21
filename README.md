@@ -61,7 +61,7 @@ print s.saibot.mean {1,2,4}
 
 # Descriptive Statistics
 
-Saibot currently supports a few popular descriptive statistics techniques for 2D Lua arrays.  
+Saibot currently supports a few popular descriptive statistics techniques for 2D Lua table.  
 
 ```
 

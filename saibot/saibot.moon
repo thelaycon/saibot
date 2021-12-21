@@ -3,30 +3,34 @@ saistats = require "saibot.saistats"
 
 
 -- Computes sum of a table
-export sum = (arr) ->
+sum = (arr) ->
   total = 0
   for i in *arr
     total += i
   return total
 
 -- Calculates the Arithmetic mean
-export mean = (arr) ->
+mean = (arr) ->
   total = 0
   total = sum arr
   return total / #arr
   
 -- Calculates variance
-export var = (arr) ->
+var = (arr, sample=false) ->
   mean_ = mean(arr)
   xsquared = 0
   for i in *arr
     xs = math.pow i - mean_, 2
     xsquared += xs
-  return xsquared / (#arr-1)
+   
+  if sample == true
+    return xsquared / (#arr-1)
+  else
+    return xsquared / (#arr)
   
 -- Calculates the Standard Deviation  
-export std = (arr) ->
-  return math.sqrt var(arr)
+std = (arr, sample=false) ->
+  return math.sqrt var(arr, sample)
 
 exists_in = (a,arr) ->
   for i in *arr
@@ -43,7 +47,7 @@ get_keys_values = (arr) ->
   return keys, values
 
 -- Calculates mode or return the least of a multi-modal table
-export mode = (arr) ->
+mode = (arr) ->
   track = {}
   mode_table = {} 
   for i in *arr
@@ -53,16 +57,16 @@ export mode = (arr) ->
       track[i] = 1
       
   keys, values = get_keys_values track
-  max_value = math.max unpack values
+  max_value = math.max table.unpack values
   
   for i,k in pairs track
     if k == max_value
       table.insert mode_table, i
   
-  return math.min unpack mode_table
+  return math.min (table.unpack mode_table)
   
 -- Calculates the median of a list
-export median = (arr) ->
+median = (arr) ->
   table.sort arr
   if #arr%2 != 0
     return arr[#arr/2 + 0.5]
@@ -70,11 +74,11 @@ export median = (arr) ->
     return (arr[#arr/2] + arr[#arr/2 + 1])/ 2
     
 -- Calculates range
-export range = (arr) ->
-  return math.max(unpack arr) - math.min(unpack arr)
+range = (arr) ->
+  return math.max(table.unpack arr) - math.min(table.unpack arr)
 
 -- Calculates Pearson Correlation between two Random Variables
-export corr = (xarr, yarr) ->
+corr = (xarr, yarr) ->
   xmean = mean xarr
   ymean = mean yarr
   xdev_ydev = 0
@@ -89,7 +93,7 @@ export corr = (xarr, yarr) ->
   return xdev_ydev / (math.sqrt xdev2_ydev2)
   
 -- Simple linear regression model class
-export class LinearRegression
+class LinearRegression
   new: (xarr, yarr) =>
     @xarr = xarr
     @yarr = yarr
@@ -111,7 +115,7 @@ export class LinearRegression
       return @find_b0() + (@find_b1()*x)
   
 -- One Way ANOVA
-export class ANOVA
+class ANOVA
   new: (anovadesign) =>
     @anovadesign = anovadesign
     
@@ -166,10 +170,10 @@ export class ANOVA
     print "ANOVA Table\n"
     print "------------------------------\n"
     print "Source  \t\t df \t\t SS \t\t MS \t\tF\n"
-    print "Between \t\t #{@dfc} \t\t #{string.format "%6.4f", @cal_ssc()}   \t#{string.format "%6.4f", @cal_msc()} \t\t#{string.format "%6.4f", @f_value()}\n"
-    print "Error   \t\t #{@dfe} \t\t #{string.format "%6.4f", @cal_sse()}   \t#{string.format "%6.4f", @cal_mse()}\n"    
-    print "Total   \t\t #{@dft} \t\t #{string.format "%6.4f", @cal_sst()}\n"
-    print "F Critical (Alpha=0.05) =====> #{string.format "%6.4f", @f_critical}\n"
+    print "Between \t\t #{@dfc} \t\t #{string.format "%.4f", @cal_ssc()}   \t#{string.format "%.4f", @cal_msc()} \t\t#{string.format "%.4f", @f_value()}\n"
+    print "Error   \t\t #{@dfe} \t\t #{string.format "%.4f", @cal_sse()}   \t#{string.format "%.4f", @cal_mse()}\n"    
+    print "Total   \t\t #{@dft} \t\t #{string.format "%.4f", @cal_sst()}\n"
+    print "F Critical (Alpha=0.05) =====> #{string.format "%.4f", @f_critical}\n"
     
     if @f_value() < @f_critical
       print "Conclusion: Accept NULL Hypothesis.\n"
@@ -178,10 +182,10 @@ export class ANOVA
     
 
 -- One Sample T test
-export class OneSampleTTest
+class OneSampleTTest
   new: (arr, mu) =>
     @xbar = mean(arr)
-    @s = std(arr)
+    @s = std(arr, true)
     @N = #arr
     @mu = mu
     
@@ -192,15 +196,15 @@ export class OneSampleTTest
     print "t-Test of a single population: mu = #{@mu}\n"
     print "-------------------------------\n"
     print "Variable \t\t N \t\t Mean \t\t StD \t\t\t T\n"
-    print "Weight \t\t #{@N} \t\t #{string.format "%6.4f", @xbar} \t\t #{string.format "%6.4f", @s} \t\t #{string.format "%6.4f", @t_stat()}\n"
+    print "Weight \t\t #{@N} \t\t #{string.format "%.4f", @xbar} \t\t #{string.format "%.4f", @s} \t\t #{string.format "%.4f", @t_stat()}\n"
     
     
-export class TwoSampleTTest
+class TwoSampleTTest
   new: (arr1, arr2, equal=true) =>
     @xbar1 = mean(arr1)
     @xbar2 = mean(arr2)
-    @s1 = std(arr1)
-    @s2 = std(arr2)
+    @s1 = std(arr1, true)
+    @s2 = std(arr2, true)
     @N1 = #arr1
     @N2 = #arr2
     @equal = equal
@@ -235,30 +239,25 @@ export class TwoSampleTTest
       print "--------------------------\n"
       print "Hypothesized Mean Difference = 0\n"
       print "        \t\t N \t\t Mean \t\t StD\n"
-      print "Method A \t\t #{@N1} \t\t #{string.format "%6.4f", @xbar1} \t\t #{string.format "%6.4f", @s1}\n"
-      print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
+      print "Method A \t\t #{@N1} \t\t #{string.format "%.4f", @xbar1} \t\t #{string.format "%.4f", @s1}\n"
+      print "Method B \t\t #{@N2} \t\t #{string.format "%.4f", @xbar2} \t\t #{string.format "%.4f", @s2}\n"
       print "df = #{@df}"
-      print "t-Stat = #{string.format "%6.2f", @t_stat()}"
-      print "t-Critical (One sided) = #{string.format "%6.2f", @t_critical005()}" 
-      print "t-Critical (Two sided) = #{string.format "%6.2f", @t_critical0025()}" 
+      print "t-Stat = #{string.format "%.2f", @t_stat()}"
+      print "t-Critical (One sided) = #{string.format "%.2f", @t_critical005()}" 
+      print "t-Critical (Two sided) = #{string.format "%.2f", @t_critical0025()}" 
     else
       print "t-Test of two populations assuming *unequal variances\n"
       print "--------------------------\n"
       print "Hypothesized Mean Difference = 0\n"
       print "        \t\t N \t\t Mean \t\t StD\n"
-      print "Method A \t\t #{@N1} \t\t #{string.format "%6.4f", @xbar1} \t\t #{string.format "%6.4f", @s1}\n"
-      print "Method B \t\t #{@N2} \t\t #{string.format "%6.4f", @xbar2} \t\t #{string.format "%6.4f", @s2}\n"
+      print "Method A \t\t #{@N1} \t\t #{string.format "%.4f", @xbar1} \t\t #{string.format "%.4f", @s1}\n"
+      print "Method B \t\t #{@N2} \t\t #{string.format "%.4f", @xbar2} \t\t #{string.format "%.4f", @s2}\n"
       print "df = #{@df}"
-      print "t-Stat = #{string.format "%6.2f", @t_stat()}" 
-      print "t-Critical (One sided) = #{string.format "%6.2f", @t_critical005()}" 
-      print "t-Critical (Two sided) = #{string.format "%6.2f", @t_critical0025()}" 
+      print "t-Stat = #{string.format "%.2f", @t_stat()}" 
+      print "t-Critical (One sided) = #{string.format "%.2f", @t_critical005()}" 
+      print "t-Critical (Two sided) = #{string.format "%.2f", @t_critical0025()}" 
 
---  model = ANOVA({"1":{6.33, 6.26, 6.31, 6.29, 6.40}, "2":{6.26, 6.36, 6.23, 6.27, 6.19, 6.50, 6.19, 6.22}, "3":{6.44, 6.38, 6.58, 6.54, 6.56, 6.34, 6.58}, "4":{6.29, 6.23, 6.19, 6.21}})
-  
--- print model\summary()
 
--- model = TwoSampleTTest({56, 50, 52, 44, 52, 47, 47, 53, 45, 48, 42, 51, 42, 43, 44}, {59, 54, 55, 65, 52, 57, 64, 53, 53, 56, 53, 57}, false)
--- model\summary()
 
 return {
 	sum:sum,
