@@ -4,6 +4,15 @@ Noob Saibot always felt like a cheatcode, I needed a similar solution to simple 
 
 Saibot is a statistics library for Lua and currently supports a few descriptive and inferential statistics techniques.
 
+# Tests
+
+Unit tests are done via [Factos](http://github.com/thelaycon/factos); a dirty quick unit testing module.
+
+```
+
+lua54 factos.lua
+
+```
 
 # Compilation
 
