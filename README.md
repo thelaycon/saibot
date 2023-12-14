@@ -1,4 +1,4 @@
-Noob Saibot always felt like a cheatcode, I needed a similar solution to simple or perhaps complex statistics problems on Lua. 
+Noob Saibot always felt like a cheat code, and there is a need for a similar solution to simple or perhaps complex statistics problems on Lua. 
 
 ![Noob Saibot](https://c.tenor.com/ckUZEMepZw4AAAAC/mortal-kombat-noob-saibot.gif)
 
